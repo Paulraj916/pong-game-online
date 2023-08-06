@@ -1,4 +1,8 @@
+const startPage = document.getElementById('startPage');
+const createBtn = document.getElementById('createBtn');
+const joinBtn = document.getElementById('joinBtn');
 const socket = io();
+let gameRoom = null;
 const gameBoard = document.querySelector("#gameBoard");
 const ctx = gameBoard.getContext("2d");
 const scoreText = document.querySelector("#scoreText");
@@ -37,6 +41,41 @@ let paddle2 = {
 // Create two objects to keep track of keys being pressed
 const keys = {};
 const keys2 = {};
+
+createBtn.addEventListener('click', () => {
+    // Generate a random room number
+    gameRoom = Math.floor(Math.random() * 10000);
+
+    // Hide the start page and show the game canvas
+    startPage.style.display = 'none';
+    gameContainer.style.display = 'block';
+
+    // Emit the room number to the server
+    socket.emit('createRoom', { room: gameRoom });
+
+    // Call your gameStart() function here to start the game
+    // ...
+});
+
+joinBtn.addEventListener('click', () => {
+    // Prompt the user for the room number
+    const roomNumber = prompt('Enter the room number to join:');
+
+    // Validate the input and emit the join request to the server
+    if (roomNumber !== null && roomNumber !== '' && !isNaN(roomNumber)) {
+        gameRoom = parseInt(roomNumber);
+
+        // Hide the start page and show the game canvas
+        startPage.style.display = 'none';
+        gameContainer.style.display = 'block';
+
+        // Emit the join request to the server
+        socket.emit('joinRoom', { room: gameRoom });
+
+        // Call your gameStart() function here to start the game
+        // ...
+    }
+});
 
 // Add event listeners to track keydown and keyup events
 window.addEventListener("keydown", (event) => {
