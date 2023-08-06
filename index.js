@@ -42,6 +42,7 @@ let paddle2 = {
 };
 const keys = {};
 const keys2 = {};
+let gameRoom = null; // Add this variable
 
 createBtn.addEventListener('click', () => {
     // Generate a random room number (6-digit)

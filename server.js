@@ -1,38 +1,46 @@
-// Import required modules
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
+const socketIO = require('socket.io');
 
-// Create an Express app and an HTTP server
 const app = express();
 const server = http.createServer(app);
+const io = socketIO(server);
 
-// Initialize a socket.io instance using the server
-const io = socketIo(server);
+let rooms = {}; // To store room information
 
-// Set the port for the server
-const PORT = process.env.PORT || 3000;
-
-// Serve static files (your game files) from the server
-app.use(express.static(__dirname));
-
-// Handle WebSocket connections
 io.on('connection', (socket) => {
-    console.log('A user connected');
+    console.log('A user connected:', socket.id);
 
-    // Handle paddle movements from clients
-    socket.on('movePaddle', (data) => {
-        // Broadcast the paddle position to all connected clients except the sender
-        socket.broadcast.emit('paddleMoved', data);
+    // Handle create room request
+    socket.on('createRoom', ({ room }) => {
+        socket.join(room);
+        rooms[room] = { player1: socket.id, player2: null };
+        io.to(socket.id).emit('roomCreated', { room });
+        console.log(`Room ${room} created by ${socket.id}`);
     });
 
-    // Handle disconnection
+    // Handle join room request
+    socket.on('joinRoom', ({ room }) => {
+        if (rooms[room] && !rooms[room].player2) {
+            socket.join(room);
+            rooms[room].player2 = socket.id;
+            io.to(socket.id).emit('roomJoined', { room });
+            io.to(rooms[room].player1).emit('player2Joined');
+            console.log(`${socket.id} joined room ${room}`);
+        } else {
+            io.to(socket.id).emit('joinFailed');
+        }
+    });
+
+    // Other event handlers and logic
+
+    // Handle disconnect
     socket.on('disconnect', () => {
-        console.log('A user disconnected');
+        console.log('A user disconnected:', socket.id);
+        // Clean up room data if necessary
     });
 });
 
-// Start the server
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+server.listen(3000, () => {
+    console.log('Server is running on port 3000');
 });
