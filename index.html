@@ -8,19 +8,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="startPage" class="center">
-        <h1>Ping Pong Game</h1>
+    <div id="startPage">
         <button id="createBtn">Create Game</button>
         <button id="joinBtn">Join Game</button>
+        <form id="joinForm" style="display: none;">
+            <input type="text" id="roomNumber" placeholder="Enter Room Number">
+            <button type="button" id="joinSubmitBtn">Join</button>
+        </form>
     </div>
-    <div id="gameContainer">
+    <div id="gameContainer" style="display: none;">
         <div id="gameWrapper">
             <canvas id="gameBoard"></canvas>
         </div>
         <div id="scoreText">0 : 0</div>
         <button id="resetBtn">Reset</button>
     </div>
+    <script src="https://cdn.socket.io/4.1.2/socket.io.js"></script>
     <script src="index.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
 </body>
 </html>

@@ -1,8 +1,11 @@
+const socket = io();
 const startPage = document.getElementById('startPage');
 const createBtn = document.getElementById('createBtn');
 const joinBtn = document.getElementById('joinBtn');
-const socket = io();
-let gameRoom = null;
+const joinForm = document.getElementById('joinForm');
+const roomNumberInput = document.getElementById('roomNumber');
+const joinSubmitBtn = document.getElementById('joinSubmitBtn');
+const gameContainer = document.getElementById('gameContainer');
 const gameBoard = document.querySelector("#gameBoard");
 const ctx = gameBoard.getContext("2d");
 const scoreText = document.querySelector("#scoreText");
@@ -37,35 +40,40 @@ let paddle2 = {
     x: gameWidth - 25,
     y: gameHeight - 120
 };
-
-// Create two objects to keep track of keys being pressed
 const keys = {};
 const keys2 = {};
 
 createBtn.addEventListener('click', () => {
-    // Generate a random room number
-    gameRoom = Math.floor(Math.random() * 10000);
+    // Generate a random room number (6-digit)
+    gameRoom = Math.floor(100000 + Math.random() * 900000);
 
-    // Hide the start page and show the game canvas
-    startPage.style.display = 'none';
+    // Display the room number on the start page
+    startPage.innerHTML = `<h1>Ping Pong Game</h1><p>Room Number: ${gameRoom}</p>`;
+    
+    // Hide the buttons and join form
+    createBtn.style.display = 'none';
+    joinBtn.style.display = 'none';
+    joinForm.style.display = 'none';
+
+    // Show the game container
     gameContainer.style.display = 'block';
 
     // Emit the room number to the server
     socket.emit('createRoom', { room: gameRoom });
 
     // Call your gameStart() function here to start the game
-    // ...
+    gameStart();
 });
 
 joinBtn.addEventListener('click', () => {
-    // Prompt the user for the room number
-    const roomNumber = prompt('Enter the room number to join:');
+    // Show the join form
+    joinForm.style.display = 'block';
+});
 
-    // Validate the input and emit the join request to the server
-    if (roomNumber !== null && roomNumber !== '' && !isNaN(roomNumber)) {
-        gameRoom = parseInt(roomNumber);
-
-        // Hide the start page and show the game canvas
+joinSubmitBtn.addEventListener('click', () => {
+    const enteredRoomNumber = parseInt(roomNumberInput.value);
+    if (enteredRoomNumber === gameRoom) {
+        // Hide the start page and show the game container
         startPage.style.display = 'none';
         gameContainer.style.display = 'block';
 
@@ -73,7 +81,9 @@ joinBtn.addEventListener('click', () => {
         socket.emit('joinRoom', { room: gameRoom });
 
         // Call your gameStart() function here to start the game
-        // ...
+        gameStart();
+    } else {
+        alert('Invalid room number. Please enter the correct room number.');
     }
 });
 
