@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
             io.to(rooms[room].player1).emit('player2Joined');
             console.log(`${socket.id} joined room ${room}`);
         } else {
-            io.to(socket.id).emit('joinFailed');
+            io.to(socket.id).emit('joinFailed'); // Emit joinFailed event
         }
     });
 
