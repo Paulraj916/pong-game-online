@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io('https://ponggameonline.netlify.app/');
 const startPage = document.getElementById('startPage');
 const createBtn = document.getElementById('createBtn');
 const joinBtn = document.getElementById('joinBtn');
@@ -7,6 +7,7 @@ const roomNumberInput = document.getElementById('roomNumber');
 const joinSubmitBtn = document.getElementById('joinSubmitBtn');
 const gameContainer = document.getElementById('gameContainer');
 const gameBoard = document.querySelector("#gameBoard");
+const enteredRoomNumber = parseInt(roomNumberInput.value, 10); // Specify base 10
 const ctx = gameBoard.getContext("2d");
 const scoreText = document.querySelector("#scoreText");
 const resetBtn = document.querySelector("#resetBtn");

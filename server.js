@@ -38,6 +38,12 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('A user disconnected:', socket.id);
         // Clean up room data if necessary
+        for (const room in rooms) {
+            if (rooms[room].player1 === socket.id || rooms[room].player2 === socket.id) {
+                delete rooms[room];
+                break;
+            }
+        }
     });
 });
 
