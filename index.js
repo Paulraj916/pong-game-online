@@ -76,14 +76,14 @@ joinBtn.addEventListener('click', () => {
 });
 
 joinSubmitBtn.addEventListener('click', () => {
-    const enteredRoomNumber = parseInt(roomNumberInput.value, 10); // Parse the input as base 10
-    if (roomNumbers.includes(enteredRoomNumber)) { // Check if the entered number is in the array
+    const enteredRoomNumber = parseInt(roomNumberInput.value, 10); // Parse as integer
+    if (enteredRoomNumber === gameRoom) {
         // Hide the start page and show the game container
         startPage.style.display = 'none';
         gameContainer.style.display = 'block';
 
-        // Emit the join request to the server
-        socket.emit('joinRoom', { room: enteredRoomNumber });
+        // Emit the join request to the server along with entered number
+        socket.emit('joinRoom', { room: gameRoom, enteredNum: enteredRoomNumber });
 
         // Call your gameStart() function here to start the game
         gameStart();
