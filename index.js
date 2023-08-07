@@ -1,4 +1,4 @@
-const socket = io('https://ponggameonline.netlify.app/server.js');
+const socket = io('https://ponggameonline.netlify.app');
 const startPage = document.getElementById('startPage');
 const createBtn = document.getElementById('createBtn');
 const joinBtn = document.getElementById('joinBtn');
