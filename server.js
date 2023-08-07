@@ -7,6 +7,7 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 let rooms = {}; // To store room information
+let roomNumbers = []; // To store generated room numbers
 
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
@@ -17,18 +18,23 @@ io.on('connection', (socket) => {
         rooms[room] = { player1: socket.id, player2: null };
         io.to(socket.id).emit('roomCreated', { room });
         console.log(`Room ${room} created by ${socket.id}`);
+        roomNumbers.push(room); // Add the room number to the array
     });
 
     // Handle join room request
     socket.on('joinRoom', ({ room }) => {
-        if (rooms[room] && !rooms[room].player2) {
-            socket.join(room);
-            rooms[room].player2 = socket.id;
-            io.to(socket.id).emit('roomJoined', { room });
-            io.to(rooms[room].player1).emit('player2Joined');
-            console.log(`${socket.id} joined room ${room}`);
+        if (roomNumbers.includes(room)) { // Check if the room number is in the array
+            if (rooms[room] && !rooms[room].player2) {
+                socket.join(room);
+                rooms[room].player2 = socket.id;
+                io.to(socket.id).emit('roomJoined', { room });
+                io.to(rooms[room].player1).emit('player2Joined');
+                console.log(`${socket.id} joined room ${room}`);
+            } else {
+                io.to(socket.id).emit('joinFailed'); // Emit joinFailed event
+            }
         } else {
-            io.to(socket.id).emit('joinFailed'); // Emit joinFailed event
+            io.to(socket.id).emit('joinFailed'); // Emit joinFailed event for invalid room number
         }
     });
 
@@ -41,6 +47,10 @@ io.on('connection', (socket) => {
         for (const room in rooms) {
             if (rooms[room].player1 === socket.id || rooms[room].player2 === socket.id) {
                 delete rooms[room];
+                const index = roomNumbers.indexOf(parseInt(room));
+                if (index !== -1) {
+                    roomNumbers.splice(index, 1); // Remove the room number from the array
+                }
                 break;
             }
         }

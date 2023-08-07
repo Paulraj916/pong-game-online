@@ -7,7 +7,6 @@ const roomNumberInput = document.getElementById('roomNumber');
 const joinSubmitBtn = document.getElementById('joinSubmitBtn');
 const gameContainer = document.getElementById('gameContainer');
 const gameBoard = document.querySelector("#gameBoard");
-const enteredRoomNumber = parseInt(roomNumberInput.value, 10); // Specify base 10
 const ctx = gameBoard.getContext("2d");
 const scoreText = document.querySelector("#scoreText");
 const resetBtn = document.querySelector("#resetBtn");
@@ -43,15 +42,19 @@ let paddle2 = {
 };
 const keys = {};
 const keys2 = {};
-let gameRoom = null; // Add this variable
+let gameRoom = null;
+let roomNumbers = []; // Array to store generated room numbers
 
 createBtn.addEventListener('click', () => {
     // Generate a random room number (6-digit)
     gameRoom = Math.floor(100000 + Math.random() * 900000);
 
+    // Add the generated room number to the array
+    roomNumbers.push(gameRoom);
+
     // Display the room number on the start page
     startPage.innerHTML = `<h1>Ping Pong Game</h1><p>Room Number: ${gameRoom}</p>`;
-    
+
     // Hide the buttons and join form
     createBtn.style.display = 'none';
     joinBtn.style.display = 'none';
@@ -74,13 +77,13 @@ joinBtn.addEventListener('click', () => {
 
 joinSubmitBtn.addEventListener('click', () => {
     const enteredRoomNumber = parseInt(roomNumberInput.value);
-    if (enteredRoomNumber === gameRoom) {
+    if (roomNumbers.includes(enteredRoomNumber)) { // Check if the entered number is in the array
         // Hide the start page and show the game container
         startPage.style.display = 'none';
         gameContainer.style.display = 'block';
 
         // Emit the join request to the server
-        socket.emit('joinRoom', { room: gameRoom });
+        socket.emit('joinRoom', { room: enteredRoomNumber });
 
         // Call your gameStart() function here to start the game
         gameStart();
