@@ -76,7 +76,7 @@ joinBtn.addEventListener('click', () => {
 });
 
 joinSubmitBtn.addEventListener('click', () => {
-    const enteredRoomNumber = parseInt(roomNumberInput.value);
+    const enteredRoomNumber = parseInt(roomNumberInput.value, 10); // Parse the input as base 10
     if (roomNumbers.includes(enteredRoomNumber)) { // Check if the entered number is in the array
         // Hide the start page and show the game container
         startPage.style.display = 'none';
@@ -91,6 +91,7 @@ joinSubmitBtn.addEventListener('click', () => {
         alert('Invalid room number. Please enter the correct room number.');
     }
 });
+
 
 // Add event listeners to track keydown and keyup events
 window.addEventListener("keydown", (event) => {
